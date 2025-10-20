@@ -23,7 +23,7 @@ class AdminAuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::guard('admin')->attempt($credentials, $request->filled('remember'))) {
-            return redirect()->intended('/admin/dashboardadmin');
+            return redirect()->route('admin.dashboard');
         }
 
         return back()->withErrors([
@@ -33,7 +33,7 @@ class AdminAuthController extends Controller
 
     public function dashboard()
     {
-        return view('admin.dashboardadmin'); // tampilkan dashboard
+        return view('admin.dashboard'); // tampilkan dashboard
     }
 
     public function logout(Request $request)
@@ -42,7 +42,6 @@ class AdminAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/admin/login');
+        return redirect()->route('admin.login.form');
     }
 }
-

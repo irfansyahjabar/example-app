@@ -1,0 +1,239 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    display: flex;
+    max-width: 1000px;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.left-panel {
+    flex: 1;
+    background: linear-gradient(135deg, #00b327, #017c11);
+    color: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.left-panel h2 {
+    margin-bottom: 10px;
+    font-size: 28px;
+}
+
+.left-panel p {
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.logo {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.right-panel {
+    flex: 1.5;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.right-panel h2 {
+    color: #00b327;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 28px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.input-container {
+    position: relative;
+}
+
+.input-container i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #00b327;
+    font-size: 18px;
+    z-index: 1;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.input-container input:focus {
+    border-color: #00b327;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 179, 39, 0.2);
+}
+
+/* Validasi input */
+.input-container input:valid {
+    border-color: #00b327;
+}
+
+.input-container input:invalid:not(:focus):not(:placeholder-shown) {
+    border-color: #e63946;
+}
+
+.toggle-password i {
+    transition: ease-in-out 0.3s;
+    color: #777;
+}
+
+.toggle-password {
+    background: red;
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.toggle-password i:hover {
+    color: #00b327;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 14px;
+    background-color: #017c11;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.btn-login:hover:not(:disabled) {
+    background-color: #026b0e;
+}
+
+.btn-login:disabled {
+    background-color: #7a9c7e;
+    cursor: not-allowed;
+}
+
+.loading-spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.error {
+    color: #e63946;
+    font-size: 14px;
+    margin-top: 5px;
+    display: block;
+}
+
+.error[role="alert"] {
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.additional-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.forgot-password,
+.register-link {
+    color: #666;
+}
+
+.forgot-password a,
+.register-link a {
+    color: #00b327;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.forgot-password a:hover,
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .additional-links {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+}

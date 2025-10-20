@@ -42,6 +42,14 @@ class StokLpgController extends Controller
         ));
     }
 
+    public function create()
+    {
+        $user = auth::user();
+        $stok = StokLpg::where('user_id', $user->id)->get();
+
+        return view('penjual.tambahstoklpg', compact('user', 'stok'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -69,6 +77,19 @@ class StokLpgController extends Controller
         return redirect()->route('stoklpg.index')->with('success', 'Stok berhasil ditambahkan!');
     }
 
+    public function edit(StokLpg $stoklpg)
+    {
+        // pastikan stok milik user yang login
+        if ($stoklpg->user_id !== auth::id()) {
+            return redirect()->route('stoklpg.index')->with('error', 'Tidak boleh edit stok user lain!');
+        }
+
+        $user = auth::user();
+        $stok = StokLpg::where('user_id', $user->id)->get();
+
+        return view('penjual.editstoklpg', compact('stoklpg', 'stok', 'user'));
+    }
+
     public function update(Request $request, StokLpg $stoklpg)
     {
         $request->validate([
@@ -94,7 +115,7 @@ class StokLpgController extends Controller
             'jenis' => $request->jenis,
             'stok'  => $request->stok,
             'harga' => $request->harga,
-            'status'=> $status,
+            'status' => $status,
         ]);
 
         return redirect()->route('stoklpg.index')->with('success', 'Stok berhasil diperbarui!');
@@ -111,24 +132,4 @@ class StokLpgController extends Controller
 
         return redirect()->route('stoklpg.index')->with('success', 'Stok berhasil dihapus!');
     }
-
-    public function create()
-    {
-        $user = auth::user();
-        $stok = StokLpg::where('user_id', $user->id)->get();
-
-        return view('penjual.tambahstoklpg', compact('user', 'stok'));
-    }
-
-    public function edit(StokLpg $stoklpg)
-    {
-        // pastikan stok milik user yang login
-        if ($stoklpg->user_id !== auth::id()) {
-            return redirect()->route('stoklpg.index')->with('error', 'Tidak boleh edit stok user lain!');
-        }
-
-        $user = auth::user();
-        return view('penjual.tambahstoklpg', compact('stoklpg', 'user'));
-    }
-
 }

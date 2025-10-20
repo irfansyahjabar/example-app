@@ -18,8 +18,8 @@ return [
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
-    
-    
+
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Guards
@@ -42,14 +42,13 @@ return [
             'provider' => 'admins',
         ],
         // guard default lain tetap
-        
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
         ],
     ],
 
-    
+
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -71,7 +70,7 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
-       
+
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
@@ -79,10 +78,10 @@ return [
     ],
 
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+    // 'users' => [
+    //     'driver' => 'database',
+    //     'table' => 'users',
+    // ],
 
     /*
     |--------------------------------------------------------------------------

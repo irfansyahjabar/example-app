@@ -28,7 +28,6 @@ class DashboardAdminController extends Controller
 
         // Kirim data ke view
         // return view('admin.dashboardadmin');
-        return view('admin.admindashboard', compact('admin', 'jumlahPenjual', 'jumlahAdmin'));
+        return view('admin.dashboard', compact('admin', 'jumlahPenjual', 'jumlahAdmin'));
     }
 }
-

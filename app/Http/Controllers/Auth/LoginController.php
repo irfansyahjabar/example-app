@@ -22,11 +22,19 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->route('penjual.dashboardpenjuallpg'); // ganti sesuai halaman tujuan
+            return redirect()->route('penjual.dashboard'); // ganti sesuai halaman tujuan
         }
 
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ])->onlyInput('email');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/penjual/login')->with('success', 'Anda telah logout.');
     }
 }

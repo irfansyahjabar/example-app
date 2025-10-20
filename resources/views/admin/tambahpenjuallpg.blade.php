@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Penjual LPG - Admin FGas</title>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -87,7 +91,8 @@
             font-weight: 500;
         }
 
-        .nav-links a:hover, .nav-links a.active {
+        .nav-links a:hover,
+        .nav-links a.active {
             background-color: rgba(255, 255, 255, 0.1);
             color: white;
             border-left: 4px solid white;
@@ -316,7 +321,9 @@
             color: var(--dark);
         }
 
-        .form-group input, .form-group select, .form-group textarea {
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
             width: 100%;
             padding: 12px 15px;
             border: 1px solid #e0e0e0;
@@ -326,7 +333,9 @@
             transition: border-color 0.3s;
         }
 
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
             border-color: var(--primary);
         }
 
@@ -393,20 +402,20 @@
                 transform: translateX(-100%);
                 transition: transform 0.3s ease;
             }
-            
+
             .sidebar.active {
                 transform: translateX(0);
             }
-            
+
             .main-content {
                 margin-left: 0;
             }
-            
+
             .header {
                 flex-direction: column;
                 align-items: flex-start;
             }
-            
+
             .header-actions {
                 margin-top: 15px;
                 width: 100%;
@@ -427,11 +436,11 @@
             .menu-toggle {
                 display: block;
             }
-            
+
             .form-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .location-coordinates {
                 flex-direction: column;
                 gap: 0;
@@ -439,13 +448,14 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo">
             <h1>F<span>Gas</span></h1>
         </div>
-        
+
         <ul class="nav-links">
             <li><a href="/admin/dashboardadmin"><i class="fas fa-home"></i> Dashboard</a></li>
             <li><a href="/admin/tabelpenjuallpg"><i class="fas fa-gas-pump"></i> Penjual LPG</a></li>
@@ -454,7 +464,7 @@
             <li><a href="/admin/mapadmin"><i class="fas fa-map"></i> Map</a></li>
             <li><a href="/"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
         </ul>
-        
+
         <div class="sidebar-footer">
             <div class="user-info">
                 <div class="user-avatar">A</div>
@@ -479,16 +489,16 @@
                     <li>Tambah Baru</li>
                 </ul>
             </div>
-            
+
             <div class="header-actions">
                 <button class="menu-toggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                
+
                 <a href="/admin/tabelpenjuallpg" class="btn btn-outline">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
-                
+
                 <a href="#" class="notification-btn">
                     <i class="fas fa-bell"></i>
                     <span class="notification-badge">3</span>
@@ -501,34 +511,34 @@
             <div class="form-header">
                 <h3><i class="fas fa-plus-circle"></i> Form Tambah Penjual LPG</h3>
             </div>
-            
+
             <form id="addSellerForm">
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="ownerName">Nama Pemilik <span style="color: var(--danger);">*</span></label>
                         <input type="text" id="ownerName" placeholder="Masukkan nama pemilik toko" required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="shopName">Nama Toko <span style="color: var(--danger);">*</span></label>
                         <input type="text" id="shopName" placeholder="Masukkan nama toko" required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="email">Email <span style="color: var(--danger);">*</span></label>
                         <input type="email" id="email" placeholder="Masukkan alamat email" required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="phoneNumber">No. HP <span style="color: var(--danger);">*</span></label>
                         <input type="tel" id="phoneNumber" placeholder="Masukkan nomor telepon" required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="address">Alamat Lengkap <span style="color: var(--danger);">*</span></label>
                         <textarea id="address" placeholder="Masukkan alamat lengkap toko" required></textarea>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="area">Area <span style="color: var(--danger);">*</span></label>
                         <select id="area" required>
@@ -540,7 +550,7 @@
                             <option value="jakarta-utara">Jakarta Utara</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="lpgTypes">Jenis LPG yang Dijual <span style="color: var(--danger);">*</span></label>
                         <select id="lpgTypes" multiple required>
@@ -551,7 +561,7 @@
                         </select>
                         <small>Gunakan Ctrl+Klik untuk memilih lebih dari satu</small>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="status">Status <span style="color: var(--danger);">*</span></label>
                         <select id="status" required>
@@ -560,32 +570,32 @@
                         </select>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="shopDescription">Deskripsi Toko</label>
                     <textarea id="shopDescription" placeholder="Tambahkan deskripsi tentang toko"></textarea>
                 </div>
-                
+
                 <div class="map-picker">
                     <h4><i class="fas fa-map-marker-alt"></i> Pilih Lokasi di Peta</h4>
                     <div class="map-placeholder">
                         <i class="fas fa-map" style="font-size: 2rem; margin-right: 10px;"></i>
                         <span>Peta pemilihan lokasi akan ditampilkan di sini</span>
                     </div>
-                    
+
                     <div class="location-coordinates">
                         <div class="form-group">
                             <label for="latitude">Latitude</label>
                             <input type="text" id="latitude" placeholder="Koordinat latitude">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="longitude">Longitude</label>
                             <input type="text" id="longitude" placeholder="Koordinat longitude">
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-check"></i> Simpan Data
@@ -608,9 +618,9 @@
         document.addEventListener('click', function(event) {
             const sidebar = document.querySelector('.sidebar');
             const menuToggle = document.querySelector('.menu-toggle');
-            
-            if (window.innerWidth < 992 && 
-                !sidebar.contains(event.target) && 
+
+            if (window.innerWidth < 992 &&
+                !sidebar.contains(event.target) &&
                 !menuToggle.contains(event.target) &&
                 sidebar.classList.contains('active')) {
                 sidebar.classList.remove('active');
@@ -620,7 +630,7 @@
         // Form validation
         document.getElementById('addSellerForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const shopName = document.getElementById('shopName').value;
             const ownerName = document.getElementById('ownerName').value;
             const email = document.getElementById('email').value;
@@ -629,34 +639,34 @@
             const area = document.getElementById('area').value;
             const lpgTypes = document.getElementById('lpgTypes');
             const status = document.getElementById('status').value;
-            
+
             // Validasi field wajib
             if (!shopName || !ownerName || !email || !phoneNumber || !address || !area || !status) {
                 alert('Harap isi semua field yang wajib diisi!');
                 return;
             }
-            
+
             // Validasi pilihan jenis LPG
             const selectedLpgTypes = Array.from(lpgTypes.selectedOptions).map(option => option.value);
             if (selectedLpgTypes.length === 0) {
                 alert('Harap pilih minimal satu jenis LPG yang dijual!');
                 return;
             }
-            
+
             // Validasi email
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(email)) {
                 alert('Format email tidak valid!');
                 return;
             }
-            
+
             // Validasi nomor telepon
             const phonePattern = /^[0-9+\-\s()]{10,}$/;
             if (!phonePattern.test(phoneNumber)) {
                 alert('Format nomor telepon tidak valid!');
                 return;
             }
-            
+
             // Simulasi pengiriman data
             const formData = {
                 shopName,
@@ -671,12 +681,12 @@
                 latitude: document.getElementById('latitude').value,
                 longitude: document.getElementById('longitude').value
             };
-            
+
             console.log('Data yang akan dikirim:', formData);
-            
+
             // Simpan data (dalam aplikasi nyata, ini akan mengirim data ke server)
             alert('Data penjual LPG berhasil disimpan!');
-            
+
             // Reset form
             this.reset();
         });
@@ -686,12 +696,15 @@
             // Simulasi pemilihan lokasi di peta
             const randomLat = -6.1 + (Math.random() * 0.2);
             const randomLng = 106.7 + (Math.random() * 0.2);
-            
+
             document.getElementById('latitude').value = randomLat.toFixed(6);
             document.getElementById('longitude').value = randomLng.toFixed(6);
-            
-            alert('Lokasi telah dipilih secara acak. Dalam aplikasi nyata, Anda akan memilih lokasi di peta interaktif.');
+
+            alert(
+                'Lokasi telah dipilih secara acak. Dalam aplikasi nyata, Anda akan memilih lokasi di peta interaktif.'
+                );
         });
     </script>
 </body>
+
 </html>

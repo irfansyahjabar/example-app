@@ -1,0 +1,125 @@
+/* Sidebar */
+.sidebar {
+    width: var(--sidebar-width);
+    background: linear-gradient(
+        180deg,
+        var(--primary) 0%,
+        var(--primary-dark) 100%
+    );
+    color: white;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.logo {
+    padding: 0 20px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 20px;
+}
+
+.logo h1 {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.logo span {
+    color: var(--secondary);
+}
+
+.nav-links {
+    flex: 1;
+    list-style: none;
+    padding: 0;
+}
+
+.nav-links li {
+    margin-bottom: 5px;
+}
+
+.nav-links a {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-left: 4px solid white;
+}
+
+.nav-links i {
+    margin-right: 15px;
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+.sidebar-footer {
+    padding: 15px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.user-details {
+    flex: 1;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.user-role {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+.logout-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.logout-btn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
