@@ -132,6 +132,7 @@ header {
         rgba(255, 127, 0, 0.1) 0%,
         rgba(45, 91, 124, 0.1) 100%
     );
+    height: 100vh;
     padding: 200px 5%;
     text-align: center;
 }
@@ -381,7 +382,7 @@ footer {
     padding: 50px 5% 20px;
 }
 
-.footer-content {
+/* .footer-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 30px;
@@ -411,7 +412,7 @@ footer {
 
 .footer-column ul li a:hover {
     color: var(--primary);
-}
+} */
 
 .social-links {
     display: flex;
@@ -439,9 +440,7 @@ footer {
 
 .copyright {
     text-align: center;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
+    padding: 10px;
 }
 
 /* Responsive Styles */

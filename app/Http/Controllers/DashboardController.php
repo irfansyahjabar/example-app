@@ -32,6 +32,8 @@ namespace App\Http\Controllers;
 use App\Models\StokLpg;
 use Illuminate\Support\Facades\Auth;
 
+use function Laravel\Prompts\confirm;
+
 class DashboardController extends Controller
 {
     public function index()

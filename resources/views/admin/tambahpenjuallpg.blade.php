@@ -702,7 +702,7 @@
 
             alert(
                 'Lokasi telah dipilih secara acak. Dalam aplikasi nyata, Anda akan memilih lokasi di peta interaktif.'
-                );
+            );
         });
     </script>
 </body>

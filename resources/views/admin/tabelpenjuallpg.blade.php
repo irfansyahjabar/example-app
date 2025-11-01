@@ -15,7 +15,7 @@
                 <i class="fas fa-bars"></i>
             </button>
 
-            <a href="/admin/tambahpenjuallpg" class="btn btn-primary">
+            <a href="{{ route('sellers.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Tambah Penjual
             </a>
 

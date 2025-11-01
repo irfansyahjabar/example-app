@@ -3,10 +3,9 @@
             <div class="logo">
                 <h1>F<span>Gas</span></h1>
             </div>
-
-            <button class="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
+            <div class="logo">
+                <h2>Temukan Penjual LPG Terdekat</h2>
+            </div>
 
             {{-- <ul class="nav-links">
                 <li><a href="#Home">Home</a></li>

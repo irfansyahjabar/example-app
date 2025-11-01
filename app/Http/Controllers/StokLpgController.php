@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\StokLpg;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
+
 
 class StokLpgController extends Controller
 {
@@ -30,6 +32,11 @@ class StokLpgController extends Controller
         $stokAdequate = $stokAsli->where('status', 'adequate')->count();
         $stokLow      = $stokAsli->where('status', 'low')->count();
         $stokCritical = $stokAsli->where('status', 'critical')->count();
+
+        // Membuat delete confirmation
+        $title = 'Hapus data stok!';
+        $text = "Anda yakin ingin menghapus data ini?";
+        confirmDelete($title, $text);
 
         return view('penjual.stoklpg', compact(
             'user',
@@ -73,7 +80,7 @@ class StokLpgController extends Controller
             'harga'   => $request->harga,
             'status'  => $status,
         ]);
-
+        Alert::success('Success', 'Data berhasil ditambahkan!');
         return redirect()->route('stoklpg.index')->with('success', 'Stok berhasil ditambahkan!');
     }
 
@@ -117,8 +124,8 @@ class StokLpgController extends Controller
             'harga' => $request->harga,
             'status' => $status,
         ]);
-
-        return redirect()->route('stoklpg.index')->with('success', 'Stok berhasil diperbarui!');
+        Alert::success('Success', 'Data berhasil diperbarui!');
+        return redirect()->route('stoklpg.index');
     }
 
     public function destroy(StokLpg $stoklpg)

@@ -154,8 +154,7 @@
                                         style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm"
-                                            onclick="return confirm('Yakin ingin hapus stok ini?')">
+                                        <button type="submit" class="btn btn-danger btn-sm" data-confirm-delete="true">
                                             Hapus
                                         </button>
                                     </form>

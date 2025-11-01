@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/sellers.css') }}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -105,137 +106,6 @@
                 map.setView([-3.5456, 118.9833], 12);
             });
 
-
-        // // Inisialisasi peta kosong tanpa setView dulu
-        // const map = L.map('map');
-
-        // // Tambahkan layer dari OpenStreetMap
-        // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //     maxZoom: 19,
-        //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        // }).addTo(map);
-
-        // // Ambil data dari API penjual (pastikan route /api/penjual sudah aktif)
-        // fetch('{{ route('data') }}')
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         const bounds = []; // untuk menyimpan semua titik marker
-
-        //         data.forEach(seller => {
-        //             if (seller.latitude && seller.longitude) {
-        //                 // Buat marker
-        //                 const marker = L.marker([
-        //                     parseFloat(seller.latitude),
-        //                     parseFloat(seller.longitude)
-        //                 ]).addTo(map);
-
-        //                 // Isi popup marker
-        //                 marker.bindPopup(`
-    //             <div style="min-width: 200px;">
-    //                 <h4 style="color: #28a745; margin-bottom: 5px;">${seller.store_name}</h4>
-    //                 <p style="margin: 0;"><i class="fas fa-user"></i> ${seller.name}</p>
-    //                 <p style="margin: 0;"><i class="fas fa-phone"></i> ${seller.phone}</p>
-    //                 <p style="margin: 0;"><i class="fas fa-map-marker-alt"></i> ${seller.address}</p>
-    //                 <div style="margin-top: 10px;">
-    //                     <button style="background-color: #28a745; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer;">Edit</button>
-    //                     <button style="background-color: #dc3545; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer;">Hapus</button>
-    //                 </div>
-    //             </div>
-    //         `);
-
-        //                 // Simpan titik marker ke bounds untuk perhitungan area tampilan
-        //                 bounds.push([parseFloat(seller.latitude), parseFloat(seller.longitude)]);
-        //             }
-        //         });
-
-        //         // Jika ada marker, peta akan menyesuaikan otomatis
-        //         if (bounds.length > 0) {
-        //             map.fitBounds(bounds, {
-        //                 padding: [50, 50]
-        //             });
-        //         } else {
-        //             // Jika belum ada data, fallback ke posisi default Majene
-        //             map.setView([-3.5456, 118.9833], 12);
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.error('Gagal memuat data penjual:', error);
-        //         // fallback ke tampilan default jika API error
-        //         map.setView([-3.5456, 118.9833], 12);
-        //     });
-
-        // Inisialisasi map
-        // const map = L.map('map').setView([-3.5456, 118.9833], 18);
-
-        // // Tambahkan peta dari OpenStreetMap
-        // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //     attribution: '&copy; OpenStreetMap contributors'
-        // }).addTo(map);
-
-        // // Ambil data penjual LPG dari backend
-        // fetch('{{ route('data') }}')
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         data.forEach(seller => {
-        //             if (seller.latitude && seller.longitude) {
-        //                 const marker = L.marker([seller.latitude, seller.longitude])
-        //                     .addTo(map)
-        //                     .bindPopup(`
-    //                 <div style="min-width: 220px;">
-    //                     <h3 style="margin-bottom: 10px; color: var(--primary);">
-    //                         ${seller.store_name}
-    //                     </h3>
-    //                     <p style="margin-bottom: 8px;">
-    //                         <i class="fas fa-user" style="color: var(--primary);"></i> ${seller.name}
-    //                     </p>
-    //                     <p style="margin-bottom: 8px;">
-    //                         <i class="fas fa-phone" style="color: var(--primary);"></i> ${seller.phone}
-    //                     </p>
-    //                     <p style="margin-bottom: 8px;">
-    //                         <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> ${seller.address || 'Alamat tidak ditemukan'}
-    //                     </p>
-    //                     <div style="display: flex; gap: 10px; margin-top: 15px;">
-    //                         <button style="padding: 8px 12px; background-color: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer;">
-    //                             Edit
-    //                         </button>
-    //                         <button style="padding: 8px 12px; background-color: #DC3545; color: white; border: none; border-radius: 5px; cursor: pointer;">
-    //                             Hapus
-    //                         </button>
-    //                     </div>
-    //                 </div>
-    //             `);
-        //             }
-        //         });
-        //     })
-        //     .catch(error => {
-        //         console.error('Gagal memuat data penjual:', error);
-        //     });
-
-        // Add gas stations markers
-        // const markers = [];
-        // gasStations.forEach(station => {
-        //     const marker = L.marker([station.lat, station.lng])
-        //         .addTo(map)
-        //         .bindPopup(`
-    //             <div style="min-width: 200px;">
-    //                 <h3 style="margin-bottom: 10px; color: var(--primary);">${station.name}</h3>
-    //                 <p style="margin-bottom: 8px;"><i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> ${station.address}</p>
-    //                 <p style="margin-bottom: 8px;"><i class="fas fa-phone" style="color: var(--primary);"></i> ${station.phone}</p>
-    //                 <p style="margin-bottom: 8px;">
-    //                     <span class="status" style="display: inline-block; padding: 5px 12px; border-radius: 50px; font-size: 0.8rem; font-weight: 500; background-color: ${station.status === 'active' ? 'rgba(40, 167, 69, 0.15)' : 'rgba(220, 53, 69, 0.15)'}; color: ${station.status === 'active' ? '#28A745' : '#DC3545'};">
-    //                         ${station.status === 'active' ? 'Aktif' : 'Nonaktif'}
-    //                     </span>
-    //                 </p>
-    //                 <div style="display: flex; gap: 10px; margin-top: 15px;">
-    //                     <button style="padding: 8px 12px; background-color: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer;">Edit</button>
-    //                     <button style="padding: 8px 12px; background-color: #DC3545; color: white; border: none; border-radius: 5px; cursor: pointer;">Hapus</button>
-    //                 </div>
-    //             </div>
-    //         `);
-
-        //     markers.push(marker);
-        // });
-
         // Filter functionality
         const areaFilter = document.getElementById('areaFilter');
         const statusFilter = document.getElementById('statusFilter');
@@ -280,10 +150,28 @@
         });
 
         // Simulate logout
-        document.querySelector('.logout-btn').addEventListener('click', function() {
-            if (confirm('Apakah Anda yakin ingin logout?')) {
-                alert('Logout berhasil!');
-                // In a real application, this would redirect to login page
+        // document.querySelector('.logout-btn').addEventListener('click', function() {
+        //     if (confirm('Apakah Anda yakin ingin logout?')) {
+        //         alert('Logout berhasil!');
+        //         // In a real application, this would redirect to login page
+        //     }
+        // });
+
+        // Toggle sidebar on mobile
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const menuToggle = document.querySelector('.menu-toggle');
+
+            if (window.innerWidth < 992 &&
+                !sidebar.contains(event.target) &&
+                !menuToggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
             }
         });
 
@@ -304,7 +192,88 @@
                 sidebar.classList.remove('active');
             }
         });
+
+        // Form validation
+        document.getElementById('addSellerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const shopName = document.getElementById('shopName').value;
+            const ownerName = document.getElementById('ownerName').value;
+            const email = document.getElementById('email').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const address = document.getElementById('address').value;
+            const area = document.getElementById('area').value;
+            const lpgTypes = document.getElementById('lpgTypes');
+            const status = document.getElementById('status').value;
+
+            // Validasi field wajib
+            if (!shopName || !ownerName || !email || !phoneNumber || !address || !area || !status) {
+                alert('Harap isi semua field yang wajib diisi!');
+                return;
+            }
+
+            // Validasi pilihan jenis LPG
+            const selectedLpgTypes = Array.from(lpgTypes.selectedOptions).map(option => option.value);
+            if (selectedLpgTypes.length === 0) {
+                alert('Harap pilih minimal satu jenis LPG yang dijual!');
+                return;
+            }
+
+            // Validasi email
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                alert('Format email tidak valid!');
+                return;
+            }
+
+            // Validasi nomor telepon
+            const phonePattern = /^[0-9+\-\s()]{10,}$/;
+            if (!phonePattern.test(phoneNumber)) {
+                alert('Format nomor telepon tidak valid!');
+                return;
+            }
+
+            // Simulasi pengiriman data
+            const formData = {
+                shopName,
+                ownerName,
+                email,
+                phoneNumber,
+                address,
+                area,
+                lpgTypes: selectedLpgTypes,
+                status,
+                description: document.getElementById('shopDescription').value,
+                latitude: document.getElementById('latitude').value,
+                longitude: document.getElementById('longitude').value
+            };
+
+            console.log('Data yang akan dikirim:', formData);
+
+            // Simpan data (dalam aplikasi nyata, ini akan mengirim data ke server)
+            alert('Data penjual LPG berhasil disimpan!');
+
+            // Reset form
+            this.reset();
+        });
+
+        // Auto generate coordinates (simulasi)
+        document.querySelector('.map-placeholder').addEventListener('click', function() {
+            // Simulasi pemilihan lokasi di peta
+            const randomLat = -6.1 + (Math.random() * 0.2);
+            const randomLng = 106.7 + (Math.random() * 0.2);
+
+            document.getElementById('latitude').value = randomLat.toFixed(6);
+            document.getElementById('longitude').value = randomLng.toFixed(6);
+
+            alert(
+                'Lokasi telah dipilih secara acak. Dalam aplikasi nyata, Anda akan memilih lokasi di peta interaktif.'
+            );
+        });
     </script>
+
+    {{-- Include Fungsi Sweetalert --}}
+    @include('sweetalert::alert')
 </body>
 
 </html>
