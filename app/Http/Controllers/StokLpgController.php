@@ -67,9 +67,9 @@ class StokLpgController extends Controller
 
         // Tentukan status otomatis
         $status = 'adequate';
-        if ($request->stok <= 10) {
+        if ($request->stok <= 3) {
             $status = 'critical';
-        } elseif ($request->stok <= 50) {
+        } elseif ($request->stok <= 15) {
             $status = 'low';
         }
 

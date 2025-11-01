@@ -80,7 +80,7 @@
     </div> --}}
 
     <!-- Charts and Orders -->
-    <div class="dashboard-content">
+    {{-- <div class="dashboard-content">
         <div class="chart-container">
             <div class="chart-header">
                 <h3>Statistik Penjualan</h3>
@@ -149,7 +149,7 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Stock Alert -->
     <div class="stock-alert">
@@ -159,8 +159,13 @@
         </div>
         <p>Stok LPG 3kg Anda hampir habis. Sisa stok: 15 tabung. Segera lakukan pengadaan untuk menghindari
             kehabisan stok.</p>
-        <button class="btn btn-primary">
-            <i class="fas fa-plus"></i> Tambah Stok
-        </button>
+        <div class="header-actions">
+            <button class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="{{ route('stoklpg.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tambah Stok
+            </a>
+        </div>
     </div>
 </x-layout>

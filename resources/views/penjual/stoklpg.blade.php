@@ -13,7 +13,6 @@
             <button class="menu-toggle">
                 <i class="fas fa-bars"></i>
             </button>
-
             <a href="{{ route('stoklpg.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Tambah Stok
             </a>
@@ -21,7 +20,7 @@
     </div>
 
     <!-- Stock Overview -->
-    <div class="stock-overview">
+    {{-- <div class="stock-overview">
         <div class="stock-card">
             <div class="stock-icon stock-1">
                 <i class="fas fa-gas-pump"></i>
@@ -61,8 +60,7 @@
                 <p>Stok Menipis / Kritis</p>
             </div>
         </div>
-    </div>
-
+    </div> --}}
 
     <!-- Stock Table -->
     <div class="table-container">

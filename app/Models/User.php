@@ -24,9 +24,15 @@ class User extends Authenticatable
         'password',
     ];
 
+    // public function stokLpg()
+    // {
+    //     return $this->hasMany(StokLpg::class);
+    // }
+
     public function stokLpg()
     {
-        return $this->hasMany(StokLpg::class);
+        return $this->hasMany(StokLpg::class, 'penjual_id');
     }
+
 
 }

@@ -21,5 +21,10 @@ class StokLpg extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function penjual()
+    {
+        return $this->belongsTo(User::class, 'penjual_id');
+    }
+
 }
 
