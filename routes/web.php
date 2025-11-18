@@ -24,9 +24,8 @@ Route::get('/penjual/login', [LoginController::class, 'showLoginForm'])->name('p
 Route::post('/penjual/login', [LoginController::class, 'login'])->name('penjual.login');
 Route::post('/penjual/logout', [LoginController::class, 'logout'])->name('penjual.logout');
 
-
 // ======== Halaman Penjual (butuh login) ======== \\
-Route::prefix('penjual')->middleware('auth')->group(function () {
+Route::prefix('penjual')->middleware('auth:penjual')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('penjual.dashboard');
     Route::get('/profile', [ProfilePenjualController::class, 'index'])->name('penjual.profile');
     Route::resource('stoklpg', StokLpgController::class);

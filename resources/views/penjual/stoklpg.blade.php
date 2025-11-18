@@ -154,7 +154,7 @@
                                         style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" data-confirm-delete="true">
+                                        <button type="submit" class="btn btn-danger btn-sm">
                                             Hapus
                                         </button>
                                     </form>

@@ -274,6 +274,8 @@
 
     {{-- Include Fungsi Sweetalert --}}
     @include('sweetalert::alert')
+
+    @stack('scripts')
 </body>
 
 </html>
