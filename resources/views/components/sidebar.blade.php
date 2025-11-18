@@ -41,7 +41,7 @@
         </div>
 
     {{-- Sidebar untuk Penjual --}}
-    @elseif(Auth::check())
+    @elseif(Auth::guard('penjual')->check())
         <ul class="nav-links">
             <li>
                 <a class="{{ Route::is('penjual.dashboard') ? 'active' : '' }}" href="{{ route('penjual.dashboard') }}">
@@ -64,8 +64,8 @@
             <div class="user-info">
                 <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
                 <div class="user-details">
-                    <div class="user-name">{{ Auth::user()->name }}</div>
-                    <div class="user-role">{{ Auth::user()->email }}</div>
+                    <div class="user-name">{{ Auth::guard('penjual')->user()->name }}</div>
+                    <div class="user-role">{{ Auth::guard('penjual')->user()->email }}</div>
                 </div>
             </div>
             <form action="{{ route('penjual.logout') }}" method="POST" style="display:inline;">

@@ -91,6 +91,11 @@
             }
         });
     </script>
+    @if ($errors->has('email'))
+        <script>
+            alert("{{ $errors->first('email') }}");
+        </script>
+    @endif
 </body>
 
 </html>

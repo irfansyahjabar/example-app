@@ -22,7 +22,7 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::guard('penjual')->attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->route('penjual.dashboard'); // ganti sesuai halaman tujuan
         }
@@ -34,7 +34,7 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('penjual')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         Alert::success('Berhasil Logout', 'Anda telah keluar dari akun.');

@@ -54,7 +54,6 @@
                     </select>
                 </div>
 
-
                 <div class="form-group">
                     <label for="quantity" class="required">Jumlah Stok</label>
                     <input type="number" name="stok" id="quantity" min="1" max="1000"
@@ -66,8 +65,6 @@
                     <input type="number" name="harga" id="sellingPrice" min="1000" placeholder="Contoh: 20000"
                         value="{{ old('harga', $stoklpg->harga) }}">
                 </div>
-
-
 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">

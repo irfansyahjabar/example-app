@@ -18,7 +18,6 @@
 
 <body>
 
-
     <x-sidebar></x-sidebar>
 
     <div class="main-content">

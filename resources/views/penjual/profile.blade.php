@@ -26,9 +26,6 @@
                 <div class="profile-info">
                     <h2>{{ $user->store_name }}</h2>
                     <div class="role">Penjual LPG</div>
-                    <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 15px;">
-                        <i class="fas fa-map-marker-alt"></i> Jakarta Pusat
-                    </p>
                 </div>
 
                 <div class="profile-stats">
@@ -40,14 +37,14 @@
                         <div class="stat-number">{{ $jumlahJenis }}</div>
                         <div class="stat-label">Jenis LPG</div>
                     </div>
-                    <div class="stat-item">
+                    {{-- <div class="stat-item">
                         <div class="stat-number">28</div>
                         <div class="stat-label">Pesanan/Bln</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">4.8</div>
                         <div class="stat-label">Rating</div>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <!-- Navigation Buttons -->
@@ -57,10 +54,6 @@
                         <span>Kelola Stok LPG</span>
                     </a>
                 </div>
-
-                <button class="btn btn-danger" id="logoutBtn">
-                    <i class="fas fa-sign-out-alt"></i> Log Out
-                </button>
             </div>
 
             <!-- Profile Content -->

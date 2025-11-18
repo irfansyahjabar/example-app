@@ -12,7 +12,7 @@ class ProfilePenjualController extends Controller
     public function index()
     {
         // Ambil data user yang sedang login
-        $user = Auth::user();
+        $user = Auth::guard('penjual')->user();
 
         // Ambil data user yang sedang login
         $stok = StokLpg::where('user_id', $user->id)

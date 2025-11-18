@@ -12,28 +12,29 @@ class StokLpgController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
+        $user = Auth::guard('penjual')->user();
 
-        // Ambil stok user login, dikelompokkan berdasarkan jenis
+        // 🔹 Ambil stok terbaru per jenis untuk user login
         $stok = StokLpg::where('user_id', $user->id)
-            ->selectRaw('MAX(id) as id, jenis, SUM(stok) as total_stok')
-            ->groupBy('jenis')
-            ->get();
+            ->whereIn('id', function ($query) use ($user) {
+                $query->selectRaw('MAX(id)')
+                    ->from('stok_lpg')
+                    ->where('user_id', $user->id)
+                    ->groupBy('jenis');
+            })
+            ->orderBy('updated_at', 'desc')
+            ->get(['id', 'jenis', 'stok', 'harga', 'status', 'updated_at']);
 
-        // Hitung total stok user login
-        $totalStok = $stok->sum('total_stok');
-
-        // Hitung jumlah jenis LPG user login
+        // 🔹 Hitung total stok dan jumlah jenis
+        $totalStok = StokLpg::where('user_id', $user->id)->sum('stok');
         $jumlahJenis = $stok->count();
 
-        // Ambil data asli untuk hitung status
-        $stokAsli = StokLpg::where('user_id', $user->id)->get();
+        // 🔹 Hitung kategori stok
+        $stokAdequate = $stok->where('status', 'adequate')->count();
+        $stokLow      = $stok->where('status', 'low')->count();
+        $stokCritical = $stok->where('status', 'critical')->count();
 
-        $stokAdequate = $stokAsli->where('status', 'adequate')->count();
-        $stokLow      = $stokAsli->where('status', 'low')->count();
-        $stokCritical = $stokAsli->where('status', 'critical')->count();
-
-        // Membuat delete confirmation
+        // 🔹 Buat konfirmasi delete (SweetAlert)
         $title = 'Hapus data stok!';
         $text = "Anda yakin ingin menghapus data ini?";
         confirmDelete($title, $text);
@@ -51,7 +52,7 @@ class StokLpgController extends Controller
 
     public function create()
     {
-        $user = auth::user();
+        $user = Auth::guard('penjual')->user();
         $stok = StokLpg::where('user_id', $user->id)->get();
 
         return view('penjual.tambahstoklpg', compact('user', 'stok'));
@@ -61,37 +62,58 @@ class StokLpgController extends Controller
     {
         $request->validate([
             'jenis' => 'required|string',
-            'stok' => 'required|integer|min:1',
-            'harga' => 'required|numeric|min:1000',
+            'stok'  => 'required|integer|min:0',
+            'harga' => 'required|numeric|min:0',
         ]);
 
-        // Tentukan status otomatis
-        $status = 'adequate';
-        if ($request->stok <= 3) {
-            $status = 'critical';
-        } elseif ($request->stok <= 15) {
+        $user = Auth::guard('penjual')->user();
+
+        // Tentuin status stok otomatis
+        if ($request->stok >= 10) {
+            $status = 'adequate';
+        } elseif ($request->stok >= 5) {
             $status = 'low';
+        } else {
+            $status = 'critical';
         }
 
-        StokLpg::create([
-            'user_id' => auth::id(),   // simpan user yang login
-            'jenis'   => $request->jenis,
-            'stok'    => $request->stok,
-            'harga'   => $request->harga,
-            'status'  => $status,
-        ]);
-        Alert::success('Success', 'Data berhasil ditambahkan!');
-        return redirect()->route('stoklpg.index')->with('success', 'Stok berhasil ditambahkan!');
+        // 🔍 Cek apakah stok jenis ini udah ada buat user login
+        $existing = StokLpg::where('user_id', $user->id)
+            ->where('jenis', $request->jenis)
+            ->first();
+
+        if ($existing) {
+            // 🔁 Tambah stok lama + stok baru
+            $existing->stok = $request->stok;
+            $existing->harga = $request->harga; // update harga
+            $existing->status = $status;
+            $existing->save();
+
+            Alert::success('Berhasil', 'Stok berhasil diperbarui (stok ditambahkan)!');
+        } else {
+            // ➕ Kalau belum ada jenis itu, buat baru
+            StokLpg::create([
+                'jenis'      => $request->jenis,
+                'stok'       => $request->stok,
+                'harga'      => $request->harga,
+                'status'     => $status,
+                'user_id'    => $user->id,
+            ]);
+
+            Alert::success('Berhasil', 'Stok baru berhasil ditambahkan!');
+        }
+
+        return redirect()->route('stoklpg.index');
     }
 
     public function edit(StokLpg $stoklpg)
     {
         // pastikan stok milik user yang login
-        if ($stoklpg->user_id !== auth::id()) {
+        if ($stoklpg->user_id != Auth::guard('penjual')->id()) {
             return redirect()->route('stoklpg.index')->with('error', 'Tidak boleh edit stok user lain!');
         }
 
-        $user = auth::user();
+        $user = Auth::guard('penjual')->user();
         $stok = StokLpg::where('user_id', $user->id)->get();
 
         return view('penjual.editstoklpg', compact('stoklpg', 'stok', 'user'));
@@ -106,7 +128,7 @@ class StokLpgController extends Controller
         ]);
 
         // Pastikan hanya pemilik stok yang bisa update
-        if ($stoklpg->user_id !== auth::id()) {
+        if ($stoklpg->user_id != Auth::guard('penjual')->id()) {
             return redirect()->route('stoklpg.index')->with('error', 'Tidak boleh edit stok user lain!');
         }
 
@@ -131,7 +153,7 @@ class StokLpgController extends Controller
     public function destroy(StokLpg $stoklpg)
     {
         // Pastikan hanya pemilik stok yang bisa hapus
-        if ($stoklpg->user_id !== auth::id()) {
+        if ($stoklpg->user_id != Auth::guard('penjual')->id()) {
             return redirect()->route('stoklpg.index')->with('error', 'Tidak boleh hapus stok user lain!');
         }
 

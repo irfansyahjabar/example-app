@@ -46,6 +46,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        
+        'penjual' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
     ],
 
 

@@ -71,7 +71,29 @@ class SellersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validasi data input dari form
+        $validated = $request->validate([
+            'ownerName'   => 'required|string|max:255',
+            'shopName'    => 'required|string|max:255',
+            'email'       => 'required|email|unique:users,email',
+            'phoneNumber' => 'required|string|max:20',
+            'password'    => 'required|min:6',
+            'latitude'    => 'nullable|numeric',
+            'longitude'   => 'nullable|numeric',
+        ]);
+
+        // Simpan ke tabel users
+        $user = User::create([
+            'name'       => $validated['ownerName'],
+            'store_name' => $validated['shopName'],
+            'email'      => $validated['email'],
+            'phone'      => $validated['phoneNumber'],
+            'password'   => bcrypt($validated['password']),
+            'latitude'   => $validated['latitude'] ?? null,
+            'longitude'  => $validated['longitude'] ?? null,
+        ]);
+
+        return redirect('/admin/sellers')->with('success', 'Penjual baru berhasil ditambahkan!');
     }
 
     /**
@@ -85,24 +107,40 @@ class SellersController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $seller = User::findOrFail($id);
+        return view('admin.edit_penjual', compact('seller'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'store_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'phone' => 'required|string|max:20',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+        ]);
+
+        $seller = User::findOrFail($id);
+        $seller->update($validated);
+
+        return redirect()->route('sellers.index')->with('success', 'Data penjual berhasil diperbarui!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $seller = User::findOrFail($id);
+        $seller->delete();
+
+        return redirect()->route('sellers.index')->with('success', 'Penjual berhasil dihapus!');
     }
 }

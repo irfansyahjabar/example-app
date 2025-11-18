@@ -3,26 +3,6 @@
     <div class="header">
         <div class="page-title">
             <h2>Tabel Akun Penjual LPG</h2>
-            <ul class="breadcrumb">
-                <li>Dashboard</li>
-                <li>Penjual LPG</li>
-                <li>Daftar Penjual</li>
-            </ul>
-        </div>
-
-        <div class="header-actions">
-            <button class="menu-toggle">
-                <i class="fas fa-bars"></i>
-            </button>
-
-            <a href="{{ route('sellers.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Tambah Penjual
-            </a>
-
-            <a href="#" class="notification-btn">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge">3</span>
-            </a>
         </div>
     </div>
 
@@ -31,9 +11,15 @@
         <div class="table-header">
             <h3><i class="fas fa-list"></i> Daftar Penjual LPG</h3>
 
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Cari penjual...">
+            <div class="header-actions">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <a href="{{ route('sellers.create') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Tambah Penjual
+                </a>
+
             </div>
         </div>
 
@@ -45,7 +31,6 @@
                     <th>Pemilik</th>
                     <th>Lokasi</th>
                     <th>Telepon</th>
-                    <th>Status</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -63,13 +48,21 @@
                             @endif
                         </td>
                         <td>{{ $seller->phone }}</td>
-                        <td><span class="status status-active">Aktif</span></td>
                         <td>
-                            <div class="action-buttons">
-                                <a href="#" class="btn-icon btn-edit"><i class="fas fa-edit"></i></a>
-                                <a href="#" class="btn-icon btn-delete"><i class="fas fa-trash"></i></a>
-                            </div>
-                        </td>
+                    <div class="action-buttons">
+                        <a href="{{ route('sellers.edit', $seller->id) }}" class="btn-icon btn-edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+
+                        <form action="{{ route('sellers.destroy', $seller->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn-icon btn-delete" onclick="return confirm('Yakin mau hapus data ini?')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
                     </tr>
                 @endforeach
             </tbody>
