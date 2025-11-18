@@ -8,350 +8,445 @@
 
     <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <style>
-        .map-section {
-            padding: 20px;
-            display: none;
-            min-height: 100vh;
-        }
-
-        #map {
-            height: 70vh;
-            width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .map-section {
-                padding: 10px;
-                min-height: 80vh;
-            }
-
-            #map {
-                height: 60vh;
-            }
-        }
-
-        @media (max-width: 480px) {
-            #map {
-                height: 50vh;
-            }
-
-            .map-section {
-                min-height: 70vh;
-            }
-        }
-
-        /* Smooth scroll */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #backToTopBtn {
-            margin-top: 15px;
-        }
-    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 </head>
 
 <body>
-    <!-- Header -->
     @include('layouts.header')
 
-    <!-- Hero Section -->
     <section class="hero" id="Home">
         <div class="hero-content">
-            <h2>Menemukan penjual LPG sambil rebahan</h2>
+            <h2>Selamat Datang Di FGas</h2>
             <p>Cari lokasi penjual LPG terdekat terlebih dahulu sebelum berangkat menjemput LPG.</p>
-            <div class="hero-buttons">
+            <div class="hero-buttons" style="margin-top:16px;">
                 <button id="findLocationBtn" class="btn btn-primary btn-large">
-                    <i class="fas fa-map-marker-alt"></i> Temukan Penjual
+                    <i class="fas fa-map-marker-alt"></i> Find Location
                 </button>
             </div>
         </div>
     </section>
 
-    {{-- Map Section --}}
-    <section class="map-section" id="mapSection">
-        <div class="container">
-            <h2 style="text-align: center; margin-bottom: 20px; color: #333;">
-                <i class="fas fa-map-marked-alt"></i> Peta Penjual LPG Terdekat
-            </h2>
-            <div id="map"></div>
-            <div style="text-align: center; margin-top: 15px;">
-                <button id="backToTopBtn" class="btn btn-secondary" style="display: none;">
-                    <i class="fas fa-arrow-up"></i> Kembali ke Atas
-                </button>
-            </div>
-        </div>
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <div id="loadingText">Mendeteksi lokasi Anda... 🔍</div>
+    </div>
+
+    <section id="mapSection" aria-hidden="true">
+        <div id="mapTitle">Lokasi Anda & Penjual LPG Terdekat</div>
+        <div id="map" role="region" aria-label="Peta penjual LPG"></div>
     </section>
 
-    <!-- Footer -->
     @include('layouts.footer')
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        // Fungsi untuk auto-scroll
-        function smoothScrollTo(element) {
-            element.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
+        document.addEventListener("DOMContentLoaded", () => {
 
-        // Fungsi untuk menyesuaikan tinggi peta berdasarkan layar
-        function adjustMapHeight() {
-            const map = document.getElementById('map');
-            if (window.innerWidth <= 768) {
-                map.style.height = '60vh';
-            } else if (window.innerWidth <= 480) {
-                map.style.height = '50vh';
-            } else {
-                map.style.height = '70vh';
-            }
-
-            if (window.map) {
-                setTimeout(() => {
-                    window.map.invalidateSize();
-                }, 100);
-            }
-        }
-
-        document.getElementById("findLocationBtn").addEventListener("click", function() {
-            const btn = this;
-            const originalText = btn.innerHTML;
+            const findBtn = document.getElementById("findLocationBtn");
             const mapSection = document.getElementById("mapSection");
+            const loadingOverlay = document.getElementById("loadingOverlay");
+            let map, userMarker, graph, sellersData;
+            let distanceControl = null;
+            let straightLineLayer = null;
 
-            // Tampilkan loading state
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mencari...';
-            btn.disabled = true;
+            const greenIcon = new L.Icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/149/149059.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+                popupAnchor: [0, -32]
+            });
 
-            // Tampilkan section peta
-            mapSection.style.display = "block";
+            // ----------------- EVENT FIND LOCATION -----------------
+            findBtn.addEventListener("click", () => {
+                if (!confirm("Aktifkan lokasi Anda untuk menemukan penjual LPG terdekat")) return;
 
-            // Auto-scroll ke bagian peta
-            setTimeout(() => {
-                smoothScrollTo(mapSection);
-            }, 100);
+                loadingOverlay.style.display = "flex";
+                mapSection.style.display = "block";
+                mapSection.setAttribute("aria-hidden", "false");
 
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        initializeMap(position);
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    },
-                    function(error) {
-                        handleGeolocationError(error);
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    }, {
-                        timeout: 10000,
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(showMap, showError, {
+                        timeout: 15000,
                         enableHighAccuracy: true
-                    }
-                );
-            } else {
-                alert("Browser Anda tidak mendukung geolocation.");
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        });
-
-        function initializeMap(position) {
-            const userLat = position.coords.latitude;
-            const userLng = position.coords.longitude;
-
-            // Sesuaikan tinggi peta
-            adjustMapHeight();
-
-            // Inisialisasi peta dengan view ke lokasi user
-            window.map = L.map('map').setView([userLat, userLng], 14);
-
-            // --- PILIHAN LAYER (Satelit, Jalan, dan Hybrid) ---
-            const googleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-                maxZoom: 20,
-                subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-                attribution: '&copy; <a href="https://www.google.com/maps">Google Maps</a>'
-            });
-
-            const googleSat = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-                maxZoom: 20,
-                subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-                attribution: '&copy; <a href="https://www.google.com/maps">Google Satellite</a>'
-            });
-
-            const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
-                maxZoom: 20,
-                subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-                attribution: '&copy; <a href="https://www.google.com/maps">Google Hybrid</a>'
-            });
-
-            // Tambahkan layer default (hybrid seperti di gambar)
-            googleHybrid.addTo(window.map);
-
-            // Tambahkan kontrol untuk ganti layer
-            const baseMaps = {
-                "Google Streets": googleStreets,
-                "Google Satellite": googleSat,
-                "Google Hybrid": googleHybrid
-            };
-            L.control.layers(baseMaps).addTo(window.map);
-
-            // Tambahkan marker untuk lokasi pengguna
-            const userMarker = L.marker([userLat, userLng]).addTo(window.map);
-            userMarker.bindPopup(`
-                <div style="min-width: 200px;">
-                    <b>📍 Lokasi Anda</b><br>
-                    <small>Anda berada di sini</small>
-                </div>
-            `).openPopup();
-
-            // --- AMBIL DATA PENJUAL LPG DARI API ---
-            fetch('{{ route('data-findlpg') }}')
-                .then(response => response.json())
-                .then(data => {
-                    const bounds = [
-                        [userLat, userLng]
-                    ]; // Mulai dengan lokasi user
-
-                    data.forEach(seller => {
-                        if (seller.latitude && seller.longitude) {
-                            const marker = L.marker([
-                                parseFloat(seller.latitude),
-                                parseFloat(seller.longitude)
-                            ]).addTo(window.map);
-
-                            // Popup dengan styling (disesuaikan untuk user biasa)
-                            marker.bindPopup(`
-                                <div style="min-width: 200px;">
-                                    <h4 style="color: #28a745; margin-bottom: 10px;">${seller.store_name}</h4>
-                                    <p style="margin-bottom: 8px;"><i class="fas fa-map-marker-alt" style="color: #28a745;"></i> ${seller.address}</p>
-                                    ${seller.name ? `<p style="margin: 0px;"><i class="fas fa-user" style="color: #28a745;"></i> ${seller.name}</p>` : ''}
-                                    ${seller.phone ? `<p style="margin: 0px;"><i class="fas fa-phone" style="color: #28a745;"></i> ${seller.phone}</p>` : ''}
-                                    <div style="margin-top: 15px;">
-                                        <button onclick="showRoute(${userLat}, ${userLng}, ${seller.latitude}, ${seller.longitude}, '${seller.store_name}')"
-                                                style="padding: 8px 12px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%;">
-                                            <i class="fas fa-route"></i> Tampilkan Rute
-                                        </button>
-                                    </div>
-                                </div>
-                            `);
-
-                            bounds.push([parseFloat(seller.latitude), parseFloat(seller.longitude)]);
-                        }
                     });
+                } else {
+                    alert("Browser Anda tidak mendukung geolocation");
+                }
+            });
 
-                    // Zoom peta untuk menampilkan semua marker (user + penjual)
-                    if (bounds.length > 0) {
-                        window.map.fitBounds(bounds, {
-                            padding: [50, 50]
+            // ------------------ HELPER FUNCTION ------------------
+            function getDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a =
+                    Math.sin(dLat / 2) ** 2 +
+                    Math.cos(lat1 * Math.PI / 180) *
+                    Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLon / 2) ** 2;
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
+            }
+
+            function buildGraphFromGeoJSON(geojson) {
+                const graph = {};
+                const features = geojson.features.filter(f => f.geometry.type === "LineString");
+
+                features.forEach(feature => {
+                    const coords = feature.geometry.coordinates;
+                    for (let i = 0; i < coords.length - 1; i++) {
+                        const [lon1, lat1] = coords[i];
+                        const [lon2, lat2] = coords[i + 1];
+                        const key1 = `${lat1},${lon1}`;
+                        const key2 = `${lat2},${lon2}`;
+                        const distance = getDistance(lat1, lon1, lat2, lon2);
+
+                        if (!graph[key1]) graph[key1] = [];
+                        if (!graph[key2]) graph[key2] = [];
+
+                        graph[key1].push({
+                            node: key2,
+                            cost: distance
+                        });
+                        graph[key2].push({
+                            node: key1,
+                            cost: distance
                         });
                     }
-                })
-                .catch(error => {
-                    console.error('Gagal memuat data penjual:', error);
-                    alert('Gagal memuat data penjual LPG. Silakan coba lagi.');
                 });
-        }
-
-        // Fungsi untuk menampilkan rute (placeholder untuk A*)
-        window.showRoute = function(startLat, startLng, endLat, endLng, storeName) {
-            // Hapus rute sebelumnya jika ada
-            if (window.routeLine) {
-                window.map.removeLayer(window.routeLine);
+                return graph;
             }
 
-            // Untuk sementara, gambar garis lurus
-            window.routeLine = L.polyline([
-                [startLat, startLng],
-                [endLat, endLng]
-            ], {
-                color: 'blue',
-                weight: 4,
-                opacity: 0.7,
-                dashArray: '10, 10'
-            }).addTo(window.map);
-
-            // Hitung jarak
-            const distance = calculateDistance(startLat, startLng, endLat, endLng);
-
-            // Focus ke rute
-            window.map.fitBounds(window.routeLine.getBounds());
-
-            alert(
-                `Rute ke ${storeName}\nJarak: ${distance.toFixed(2)} km\n\nFitur rute detail akan diimplementasi dengan algoritma A*`
-            );
-        }
-
-        // Fungsi menghitung jarak (Haversine formula)
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Radius bumi dalam km
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a =
-                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
-        }
-
-        function handleGeolocationError(error) {
-            let message = "Terjadi kesalahan dalam mengambil lokasi: ";
-
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    message += "Izin lokasi ditolak. Silakan izinkan akses lokasi di pengaturan browser Anda.";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    message += "Informasi lokasi tidak tersedia.";
-                    break;
-                case error.TIMEOUT:
-                    message += "Waktu permintaan lokasi habis.";
-                    break;
-                default:
-                    message += "Kesalahan tidak diketahui.";
-                    break;
+            function findNearestNode(lat, lon, graph) {
+                let nearest = null;
+                let min = Infinity;
+                for (const key in graph) {
+                    const [nLat, nLon] = key.split(',').map(Number);
+                    const dist = getDistance(lat, lon, nLat, nLon);
+                    if (dist < min) {
+                        min = dist;
+                        nearest = key;
+                    }
+                }
+                return nearest;
             }
 
-            alert(message);
-            console.error("Geolocation error:", error);
-        }
+            function aStarGraph(graph, startNode, goalNode) {
+                const openSet = new Set([startNode]);
+                const cameFrom = {};
+                const gScore = {};
+                const fScore = {};
 
-        // Tombol kembali ke atas
-        document.getElementById("backToTopBtn").addEventListener("click", function() {
-            smoothScrollTo(document.getElementById("Home"));
-        });
+                for (const node in graph) {
+                    gScore[node] = Infinity;
+                    fScore[node] = Infinity;
+                }
 
-        // Tampilkan tombol kembali ke atas ketika di-scroll
-        window.addEventListener('scroll', function() {
-            const backToTopBtn = document.getElementById("backToTopBtn");
-            const mapSection = document.getElementById("mapSection");
+                gScore[startNode] = 0;
+                fScore[startNode] = getDistance(...startNode.split(',').map(Number), ...goalNode.split(',').map(
+                    Number));
 
-            if (window.scrollY > mapSection.offsetTop) {
-                backToTopBtn.style.display = 'block';
-            } else {
-                backToTopBtn.style.display = 'none';
+                //Memulai algoritma A* atau Loop pencarian jalur
+                while (openSet.size > 0) {
+                    let current = [...openSet].reduce((a, b) => fScore[a] < fScore[b] ? a : b);
+
+                    if (current === goalNode) {
+                        const path = [];
+                        let temp = current;
+                        while (temp in cameFrom) {
+                            path.unshift(temp);
+                            temp = cameFrom[temp];
+                        }
+                        path.unshift(startNode);
+                        return path;
+                    }
+
+                    openSet.delete(current);
+
+                    //caek rute apakah lebih baik atau lebih murah dan efisien
+                    for (const neighbor of graph[current]) {
+                        const tentative = gScore[current] + neighbor.cost;
+
+                        //jika rute lebih baik, update jalur
+                        if (tentative < gScore[neighbor.node]) {
+                            cameFrom[neighbor.node] = current;
+                            gScore[neighbor.node] = tentative;
+                            fScore[neighbor.node] = tentative + getDistance(...neighbor.node.split(',').map(Number),
+                                ...goalNode.split(',').map(Number));
+                            openSet.add(neighbor.node);
+                        }
+                    }
+                }
+                return [];
             }
-        });
 
-        // Adjust map height ketika window di-resize
-        window.addEventListener('resize', adjustMapHeight);
+            // ------------------ DRAW ROUTE FUNCTION ------------------
+            function redrawRoute(userLat, userLng) {
+                map.eachLayer(layer => {
+                    if (layer instanceof L.Polyline && !(layer instanceof L.TileLayer)) {
+                        map.removeLayer(layer);
+                    }
+                });
 
-        // Inisialisasi awal
-        document.addEventListener('DOMContentLoaded', function() {
-            adjustMapHeight();
+                if (distanceControl) {
+                    try {
+                        map.removeControl(distanceControl);
+                    } catch (e) {}
+                    distanceControl = null;
+                }
+
+                const selectedType = document.getElementById('filterLpg')?.value || '';
+                const cheapestMode = document.getElementById('cheapestMode')?.checked || false;
+
+                const validSellers = (sellersData || []).filter(s => {
+                    const hasStock = s.stok_lpg?.some(item =>
+                        (!selectedType || item.jenis.toLowerCase() === selectedType.toLowerCase())
+                    );
+                    return isFinite(s.latitude) && isFinite(s.longitude) && hasStock;
+                });
+
+                if (validSellers.length === 0) {
+                    alert("Tidak ada penjual dengan stok sesuai filter!");
+                    return;
+                }
+
+                let targetSeller;
+
+                // 🔹 kalau mode termurah aktif + jenis dipilih
+                if (cheapestMode && selectedType) {
+                    let minPrice = Infinity;
+                    validSellers.forEach(s => {
+                        const stok = s.stok_lpg.find(i => i.jenis.toLowerCase() === selectedType
+                            .toLowerCase());
+                        if (stok && stok.harga < minPrice) {
+                            minPrice = stok.harga;
+                            targetSeller = s;
+                        }
+                    });
+                    if (!targetSeller) {
+                        alert("⚠️ Tidak ditemukan penjual dengan harga untuk jenis itu.");
+                        return;
+                    }
+                } else {
+                    // 🔹 kalau filter dimatikan → balik ke penjual terdekat default
+                    targetSeller = validSellers.reduce((a, b) =>
+                        getDistance(userLat, userLng, a.latitude, a.longitude) <
+                        getDistance(userLat, userLng, b.latitude, b.longitude) ? a : b
+                    );
+                }
+
+                // lanjut ke pathfinding (nggak diubah)
+                const start = findNearestNode(userLat, userLng, graph);
+                const goal = findNearestNode(Number(targetSeller.latitude), Number(targetSeller.longitude), graph);
+                if (!start || !goal) return;
+
+                const path = aStarGraph(graph, start, goal);
+                // 🔹 Tampilkan rute A*
+                if (path.length > 1) {
+                    const latlngs = path.map(p => p.split(',').map(Number));
+                    L.polyline(latlngs, {
+                        color: cheapestMode ? 'orange' : 'blue',
+                        weight: 4
+                    }).addTo(map);
+                    map.fitBounds(latlngs);
+
+                    const totalDistance = latlngs.reduce((acc, cur, i) => {
+                        if (i === 0) return 0;
+                        const [lat1, lng1] = latlngs[i - 1];
+                        const [lat2, lng2] = cur;
+                        return acc + getDistance(lat1, lng1, lat2, lng2);
+                    }, 0);
+
+                    const midPoint = latlngs[Math.floor(latlngs.length / 2)];
+                    L.popup()
+                        .setLatLng(midPoint)
+                        .setContent(`
+                            <b>Tujuan:</b> ${targetSeller.store_name ?? '-'}<br>
+                            <b>${cheapestMode ? 'Harga termurah' : 'Penjual terdekat'}</b><br>
+                            <b>Jarak Rute:</b> ${totalDistance.toFixed(2)} km
+                        `)
+                        .openOn(map);
+                } else {
+                    console.warn("⚠️ Jalur A* gagal, fallback garis lurus.");
+                    L.polyline([
+                        [userLat, userLng],
+                        [targetSeller.latitude, targetSeller.longitude]
+                    ], {
+                        color: 'gray',
+                        weight: 4,
+                        dashArray: '6 6'
+                    }).addTo(map);
+                    map.fitBounds([
+                        [userLat, userLng],
+                        [targetSeller.latitude, targetSeller.longitude]
+                    ]);
+                }
+
+                // 🔹 Garis lurus tambahan (popup seperti rute)
+                const showStraight = document.getElementById('showStraightLine')?.checked || false;
+                if (straightLineLayer) {
+                    map.removeLayer(straightLineLayer);
+                    straightLineLayer = null;
+                }
+
+                if (showStraight) {
+                    const startPoint = [userLat, userLng];
+                    const endPoint = [targetSeller.latitude, targetSeller.longitude];
+                    const straightDist = getDistance(userLat, userLng, targetSeller.latitude, targetSeller
+                        .longitude);
+
+                    // gambar garis putus-putus
+                    straightLineLayer = L.polyline([startPoint, endPoint], {
+                        color: 'gray',
+                        weight: 3,
+                        dashArray: '6 6',
+                        opacity: 0.8
+                    }).addTo(map);
+
+                    // titik tengah garis lurus
+                    const midLat = (userLat + targetSeller.latitude) / 2;
+                    const midLng = (userLng + targetSeller.longitude) / 2;
+
+                    // popup gaya sama kayak popup rute
+                    L.popup()
+                        .setLatLng([midLat, midLng])
+                        .setContent(`
+                            <b>Garis Lurus:</b><br>
+                            <b>Jarak:</b> ${straightDist.toFixed(2)} km
+                        `)
+                        .addTo(map);
+                }
+            }
+
+            // ------------------ SHOW MAP ------------------
+            function showMap(position) {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+
+                if (map) map.remove();
+                map = L.map('map').setView([userLat, userLng], 15);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap'
+                }).addTo(map);
+
+                // UI Filter + Toggle
+                const filterContainer = L.control({
+                    position: 'topright'
+                });
+                filterContainer.onAdd = function() {
+                    const div = L.DomUtil.create('div', 'filter-box');
+                    div.innerHTML = `
+                    <div style="background:white; padding:8px 12px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2); font-size:14px;">
+                        <select id="filterLpg" style="margin-bottom:6px; width:100%; padding:4px;">
+                            <option value="">-- Pilih Jenis LPG --</option>
+                            <option value="3kg">LPG 3 kg</option>
+                            <option value="5.5kg">LPG 5.5 kg</option>
+                            <option value="12kg">LPG 12 kg</option>
+                        </select>
+                        <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
+                            <input type="checkbox" id="cheapestMode"/> Harga Termurah 💸
+                        </label>
+                        <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer; margin-top:4px;">
+                            <input type="checkbox" id="showStraightLine"/> Tampilkan Garis Lurus 📏
+                        </label>
+                    </div>`;
+                    return div;
+                };
+                filterContainer.addTo(map);
+
+                userMarker = L.marker([userLat, userLng], {
+                        draggable: true
+                    })
+                    .addTo(map)
+                    .bindPopup("<b>Lokasi Anda</b>")
+                    .openPopup();
+
+                userMarker.on('dragend', e => {
+                    const newPos = e.target.getLatLng();
+                    redrawRoute(newPos.lat, newPos.lng);
+                });
+
+                Promise.all([
+                        fetch('/storage/data/majene_highway.geojson').then(r => r.json()),
+                        fetch('{{ route('data-findlpg') }}').then(r => r.json())
+                    ])
+                    .then(([geoData, sellers]) => {
+                        sellersData = sellers;
+                        graph = buildGraphFromGeoJSON(geoData);
+
+                        L.geoJSON(geoData, {
+                            filter: f => f.geometry.type === "LineString",
+                            style: {
+                                color: '#4ade80',
+                                weight: 1
+                            }
+                        }).addTo(map);
+
+                        sellers.forEach(s => {
+                            const lat = Number(s.latitude);
+                            const lng = Number(s.longitude);
+                            if (!isFinite(lat) || !isFinite(lng)) return;
+
+                            const stokList = (s.stok_lpg && s.stok_lpg.length > 0) ?
+                                s.stok_lpg.map(item =>
+                                    `<li>${item.jenis}: <b>${item.stok}</b> (${item.status})</li>`)
+                                .join('') :
+                                '<li><i>Tidak tersedia</i></li>';
+
+                            const popupHTML = `
+                            <div class="popup-content" style="font-size:14px; line-height:1.4;">
+                                <b style="font-size:16px;">${s.store_name ?? '-'}</b><br>
+                                <i class="fas fa-phone"></i> ${s.phone ?? '-'}<br>
+                                <i class="fas fa-map-marker-alt"></i> ${s.address ?? 'Alamat tidak diketahui'}<br>
+                                <hr style="margin:4px 0;">
+                                <b>Stok LPG:</b>
+                                <ul style="margin:4px 0; padding-left:16px;">${stokList}</ul>
+                            </div>`;
+                            L.marker([lat, lng], {
+                                    icon: greenIcon
+                                })
+                                .addTo(map)
+                                .bindPopup(popupHTML);
+                        });
+
+                        redrawRoute(userLat, userLng);
+                        loadingOverlay.style.display = "none";
+
+                        // event filter / toggle
+                        document.getElementById('filterLpg').addEventListener('change', () => {
+                            const pos = userMarker.getLatLng();
+                            redrawRoute(pos.lat, pos.lng);
+                        });
+                        document.getElementById('cheapestMode').addEventListener('change', () => {
+                            const pos = userMarker.getLatLng();
+                            redrawRoute(pos.lat, pos.lng);
+                        });
+                        document.getElementById('showStraightLine').addEventListener('change', () => {
+                            const pos = userMarker.getLatLng();
+                            redrawRoute(pos.lat, pos.lng);
+                        });
+                    })
+                    .catch(err => {
+                        console.error('❌ Gagal memuat data:', err);
+                        alert("Gagal memuat data jalan atau penjual.");
+                        loadingOverlay.style.display = "none";
+                    });
+            }
+
+            function showError(error) {
+                loadingOverlay.style.display = "none";
+                const msg = {
+                    1: "Izin lokasi ditolak.",
+                    2: "Informasi lokasi tidak tersedia.",
+                    3: "Waktu permintaan lokasi habis.",
+                } [error.code] || "Terjadi kesalahan tidak diketahui.";
+                alert(msg);
+            }
         });
     </script>
+
 </body>
 
 </html>

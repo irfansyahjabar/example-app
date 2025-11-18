@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 </head>
-
 <body>
     <div class="container">
         <div class="left-panel">
@@ -58,11 +57,6 @@
                     <div class="loading-spinner" id="loadingSpinner"></div>
                 </button>
 
-                <div class="additional-links">
-                    <div class="register-link">
-                        Penjual LPG? <a href="/penjual/login">Masuk di sini</a>
-                    </div>
-                </div>
             </form>
         </div>
     </div>

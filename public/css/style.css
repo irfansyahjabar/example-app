@@ -647,6 +647,10 @@
     gap: 8px;
 }
 
+.btn {
+    color: rgb(29, 28, 28);
+}
+
 .btn-icon {
     width: 35px;
     height: 35px;
@@ -657,6 +661,8 @@
     color: white;
     text-decoration: none;
     transition: all 0.3s;
+    cursor: pointer;
+    border: none;
 }
 
 .btn-edit {

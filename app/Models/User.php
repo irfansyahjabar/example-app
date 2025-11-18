@@ -26,7 +26,8 @@ class User extends Authenticatable
 
     public function stokLpg()
     {
-        return $this->hasMany(StokLpg::class);
+        return $this->hasMany(StokLpg::class, 'user_id');
     }
+
 
 }

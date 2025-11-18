@@ -9,16 +9,16 @@ class StokLpg extends Model
     protected $table = 'stok_lpg';
 
     protected $fillable = [
-        'user_id',
         'jenis',
         'stok',
         'harga',
         'status',
+        'user_id',
     ];
 
-    public function user()
+    public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
 }

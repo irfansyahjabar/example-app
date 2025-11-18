@@ -20,50 +20,6 @@
         </div>
     </div>
 
-    <!-- Stock Overview -->
-    <div class="stock-overview">
-        <div class="stock-card">
-            <div class="stock-icon stock-1">
-                <i class="fas fa-gas-pump"></i>
-            </div>
-            <div class="stock-info">
-                <h3>{{ $totalStok }}</h3>
-                <p>Total Stok LPG</p>
-            </div>
-        </div>
-
-        <div class="stock-card">
-            <div class="stock-icon stock-2">
-                <i class="fas fa-box"></i>
-            </div>
-            <div class="stock-info">
-                <h3>{{ $jumlahJenis }}</h3>
-                <p>Jenis LPG</p>
-            </div>
-        </div>
-
-        <div class="stock-card">
-            <div class="stock-icon stock-3">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="stock-info">
-                <h3>{{ $stokAdequate }}</h3>
-                <p>Stok Cukup</p>
-            </div>
-        </div>
-
-        <div class="stock-card">
-            <div class="stock-icon stock-4">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <div class="stock-info">
-                <h3>{{ $stokLow + $stokCritical }}</h3>
-                <p>Stok Menipis / Kritis</p>
-            </div>
-        </div>
-    </div>
-
-
     <!-- Stock Table -->
     <div class="table-container">
         <div class="table-header">
@@ -148,13 +104,13 @@
                             <div class="action-buttons">
                                 @if ($stokTerbaru)
                                     <a href="{{ route('stoklpg.edit', $stokTerbaru->id) }}"
-                                        class="btn btn-warning btn-sm">Edit</a>
+                                        class="btn btn-warning btn-sm btn-edit">Edit</a>
 
                                     <form action="{{ route('stoklpg.destroy', $stokTerbaru->id) }}" method="POST"
                                         style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">
+                                        <button type="button" class="btn btn-danger btn-sm btn-delete">
                                             Hapus
                                         </button>
                                     </form>

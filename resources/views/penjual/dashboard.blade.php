@@ -13,11 +13,6 @@
             <button class="menu-toggle">
                 <i class="fas fa-bars"></i>
             </button>
-
-            <a href="#" class="notification-btn">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge">5</span>
-            </a>
         </div>
     </div>
 
@@ -80,7 +75,7 @@
     </div> --}}
 
     <!-- Charts and Orders -->
-    <div class="dashboard-content">
+    {{-- <div class="dashboard-content">
         <div class="chart-container">
             <div class="chart-header">
                 <h3>Statistik Penjualan</h3>
@@ -149,7 +144,7 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Stock Alert -->
     <div class="stock-alert">
@@ -159,8 +154,39 @@
         </div>
         <p>Stok LPG 3kg Anda hampir habis. Sisa stok: 15 tabung. Segera lakukan pengadaan untuk menghindari
             kehabisan stok.</p>
-        <button class="btn btn-primary">
-            <i class="fas fa-plus"></i> Tambah Stok
-        </button>
+        <div class="header-actions">
+            <button class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="{{ route('stoklpg.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tambah Stok
+            </a>
+        </div>
     </div>
+    <Script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const totalEl = document.querySelector(".stock-card:nth-child(1) h3");
+        const jenisEl = document.querySelector(".stock-card:nth-child(2) h3");
+        const adequateEl = document.querySelector(".stock-card:nth-child(3) h3");
+        const lowEl = document.querySelector(".stock-card:nth-child(4) h3");
+
+        async function refreshDashboard() {
+            try {
+                const res = await fetch("{{ route('penjual.dashboard.data') }}");
+                const data = await res.json();
+
+                totalEl.textContent = data.totalStok;
+                jenisEl.textContent = data.jumlahJenis;
+                adequateEl.textContent = data.stokAdequate;
+                lowEl.textContent = data.stokLow + data.stokCritical;
+            } catch (err) {
+                console.error("Gagal memperbarui dashboard:", err);
+            }
+        }
+
+        // Refresh pertama kali dan tiap 10 detik
+        refreshDashboard();
+        setInterval(refreshDashboard, 10000);
+    });
+    </Script>
 </x-layout>

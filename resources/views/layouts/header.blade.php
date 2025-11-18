@@ -10,10 +10,10 @@
             {{-- <ul class="nav-links">
                 <li><a href="#Home">Home</a></li>
                 <li><a href="#Home"></a></li>
-            </ul>
+            </ul>---}}
 
             <div class="nav-buttons">
                 <a href="{{ route('penjual.login.form') }}" class="btn btn-outline">Login</a>
-            </div> --}}
+            </div> 
         </div>
     </header>
